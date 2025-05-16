@@ -1,0 +1,224 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.ankit.trainTicketBooking.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (com.ankit.trainTicketBooking.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (1/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.3%
+  </span>
+  <span class="absValue">
+    (1/44)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.ankit.trainTicketBooking.controller;
+&nbsp;
+&nbsp;import com.ankit.trainTicketBooking.entity.Bookings;
+&nbsp;import com.ankit.trainTicketBooking.entity.Payments;
+&nbsp;import com.ankit.trainTicketBooking.entity.User;
+&nbsp;import com.ankit.trainTicketBooking.repository.UserRepository;
+&nbsp;import com.ankit.trainTicketBooking.service.UserService;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.core.context.SecurityContextHolder;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.LinkedHashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/user&quot;)
+<b class="fc">&nbsp;public class UserController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    public UserService userService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    public UserRepository userRepository;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/details/{userid}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getUserDetails(@PathVariable String userid){
+&nbsp;        try {
+<b class="nc">&nbsp;            User user = userRepository.findByUserid(userid);</b>
+<b class="nc">&nbsp;            if (user == null) {</b>
+<b class="nc">&nbsp;                return new ResponseEntity&lt;&gt;(&quot;User not found&quot;, HttpStatus.NOT_FOUND);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Return the user details as JSON
+<b class="nc">&nbsp;            Map&lt;String, Object&gt; response = new LinkedHashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;            response.put(&quot;userid&quot;, user.getUserid());</b>
+<b class="nc">&nbsp;            response.put(&quot;name&quot;, user.getName());</b>
+<b class="nc">&nbsp;            response.put(&quot;email&quot;, user.getEmail());</b>
+<b class="nc">&nbsp;            response.put(&quot;phone&quot;, user.getPhone());</b>
+<b class="nc">&nbsp;            response.put(&quot;role&quot;, user.getRole());</b>
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(&quot;Error fetching user details&quot;, HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/update&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; updateUser(@RequestBody User user){
+&nbsp;        try{
+<b class="nc">&nbsp;            Authentication authentication= SecurityContextHolder.getContext().getAuthentication();</b>
+<b class="nc">&nbsp;            String userid=authentication.getName();</b>
+<b class="nc">&nbsp;            User userInDb=userRepository.findByUserid(userid);</b>
+<b class="nc">&nbsp;            if (userInDb == null) {</b>
+<b class="nc">&nbsp;                return new ResponseEntity&lt;&gt;(&quot;User not found.&quot;, HttpStatus.NOT_FOUND);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            userInDb.setPassword(user.getPassword());</b>
+<b class="nc">&nbsp;            userInDb.setName(user.getName());</b>
+<b class="nc">&nbsp;            userInDb.setEmail(user.getEmail());</b>
+<b class="nc">&nbsp;            userInDb.setPhone(user.getPhone());</b>
+<b class="nc">&nbsp;            User savedUser=userService.saveNewUser(userInDb);</b>
+<b class="nc">&nbsp;            Map&lt;String, Object&gt; response=new LinkedHashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;            response.put(&quot;message&quot;,&quot;Update Successful&quot;);</b>
+<b class="nc">&nbsp;            response.put(&quot;userid&quot;,savedUser.getUserid());</b>
+<b class="nc">&nbsp;            response.put(&quot;role&quot;,savedUser.getRole());</b>
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(response,HttpStatus.CREATED);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(&quot;Update Failed: Check once more.&quot;,HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/payment-history&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getPaymentHistory(){
+&nbsp;        try{
+<b class="nc">&nbsp;            Authentication authentication=SecurityContextHolder.getContext().getAuthentication();</b>
+<b class="nc">&nbsp;            String userid= authentication.getName();</b>
+<b class="nc">&nbsp;            User user=userRepository.findByUserid(userid);</b>
+<b class="nc">&nbsp;            List&lt;Payments&gt; paymentsList=user.getPaymentHistory();</b>
+<b class="nc">&nbsp;            if(paymentsList.isEmpty()){</b>
+<b class="nc">&nbsp;                return new ResponseEntity&lt;&gt;(&quot;No Payments have been made yet.&quot;,</b>
+&nbsp;                        HttpStatus.NOT_FOUND);
+&nbsp;            }
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(paymentsList,HttpStatus.FOUND);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(&quot;Some error Occurred&quot;,HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/booking-history&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getBookingHistory(){
+&nbsp;        try{
+<b class="nc">&nbsp;            Authentication authentication=SecurityContextHolder.getContext().getAuthentication();</b>
+<b class="nc">&nbsp;            String userid= authentication.getName();</b>
+<b class="nc">&nbsp;            User user=userRepository.findByUserid(userid);</b>
+<b class="nc">&nbsp;            List&lt;Bookings&gt; bookingsList=user.getBookingHistory();</b>
+<b class="nc">&nbsp;            if(bookingsList.isEmpty()){</b>
+<b class="nc">&nbsp;                return new ResponseEntity&lt;&gt;(&quot;No Booking has been made yet.&quot;,</b>
+&nbsp;                        HttpStatus.NOT_FOUND);
+&nbsp;            }
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(bookingsList,HttpStatus.FOUND);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(&quot;Some error Occurred&quot;,HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-23 15:40</div>
+</div>
+</body>
+</html>

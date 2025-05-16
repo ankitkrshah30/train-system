@@ -1,0 +1,147 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PaymentsController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.ankit.trainTicketBooking.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: PaymentsController (com.ankit.trainTicketBooking.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PaymentsController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.ankit.trainTicketBooking.controller;
+&nbsp;
+&nbsp;import com.ankit.trainTicketBooking.entity.Payments;
+&nbsp;import com.ankit.trainTicketBooking.repository.BookingsRepository;
+&nbsp;import com.ankit.trainTicketBooking.repository.PaymentsRepository;
+&nbsp;import com.ankit.trainTicketBooking.service.BookingService;
+&nbsp;import com.ankit.trainTicketBooking.service.PaymentService;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+&nbsp;import org.springframework.http.HttpEntity;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.core.context.SecurityContextHolder;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/payment&quot;)
+<b class="fc">&nbsp;public class PaymentsController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    public PaymentsRepository paymentsRepository;
+&nbsp;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    public PaymentService paymentService;
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;?&gt; simulatePayment(@RequestBody Payments payments){
+&nbsp;        try{
+<b class="nc">&nbsp;            Authentication authentication= SecurityContextHolder.getContext().getAuthentication();</b>
+<b class="nc">&nbsp;            String userid=authentication.getName();</b>
+<b class="nc">&nbsp;            ResponseEntity&lt;?&gt; responseEntity=paymentService.initiatePayment(userid,payments);</b>
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(responseEntity,HttpStatus.OK);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            System.out.println(e);</b>
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-23 15:40</div>
+</div>
+</body>
+</html>
