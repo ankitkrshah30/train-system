@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <style>
+        /* Custom styles */
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            color: #374151;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            background-color: #3b82f6;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        #train-details {
+            margin-top: 2rem;
+            border-radius: 0.75rem;
+            background-color: #fff;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: left;
+        }
+
+        #train-details h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        #train-details p {
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        #train-schedule {
+            margin-top: 1.5rem;
+        }
+
+        #train-schedule h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        #train-schedule ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        #train-schedule li {
+            background-color: #f7fafc;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+        #error-message {
+            margin-top: 1.5rem;
+            color: #dc2626;
+            font-size: 1rem;
+            font-weight: 500;
+            display: none;
+            padding: 1rem;
+            background-color: #fee2e2;
+            border-radius: 0.375rem;
+            border: 1px solid #fecaca;
+        }
+
+        .loading-indicator {
+            display: none;
+            margin-top: 2rem;
+            font-size: 1.25rem;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+<div class="container">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-8">Train Details</h1>
+
+    <div class="input-group">
+        <label for="trainNumber">Enter Train Number:</label>
+        <input type="text" id="trainNumber" placeholder="e.g., 12628">
+    </div>
+
+    <button id="fetchTrainDetails" class="btn-primary">Fetch Details</button>
+
+    <div id="loading-indicator" class="loading-indicator">Loading...</div>
+
+    <div id="error-message" class="mt-4 text-red-500"></div>
+
+    <div id="train-details" class="mt-8" style="display: none;">
+        <h2>Train Information</h2>
+        <p><strong>Train Number:</strong> <span id="display-train-number"></span></p>
+        <p><strong>Train Name:</strong> <span id="display-train-name"></span></p>
+        <p><strong>Source:</strong> <span id="display-source"></span></p>
+        <p><strong>Destination:</strong> <span id="display-destination"></span></p>
+        <p><strong>Departure Time:</strong> <span id="display-departure-time"></span></p>
+        <p><strong>Arrival Time:</strong> <span id="display-arrival-time"></span></p>
+
+        <div id="train-schedule">
+            <h3>Train Schedule</h3>
+            <ul id="display-train-schedule">
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    const trainNumberInput = document.getElementById('trainNumber');
+    const fetchTrainDetailsButton = document.getElementById('fetchTrainDetails');
+    const trainDetailsContainer = document.getElementById('train-details');
+    const errorMessageContainer = document.getElementById('error-message');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    const displayTrainNumber = document.getElementById('display-train-number');
+    const displayTrainName = document.getElementById('display-train-name');
+    const displaySource = document.getElementById('display-source');
+    const displayDestination = document.getElementById('display-destination');
+    const displayDepartureTime = document.getElementById('display-departure-time');
+    const displayArrivalTime = document.getElementById('display-arrival-time');
+    const displayTrainSchedule = document.getElementById('display-train-schedule');
+
+    fetchTrainDetailsButton.addEventListener('click', () => {
+        const trainNumber = trainNumberInput.value.trim();
+        if (!trainNumber) {
+            errorMessageContainer.textContent = "Please enter a train number.";
+            errorMessageContainer.style.display = 'block';
+            trainDetailsContainer.style.display = 'none';
+            return;
+        }
+
+        errorMessageContainer.style.display = 'none';
+        loadingIndicator.style.display = 'block';
+        trainDetailsContainer.style.display = 'none';
+
+        // IMPORTANT:  Replace this URL with your actual backend API endpoint
+        const apiUrl = `http://localhost:8080/train/${trainNumber}`;
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then(data => {
+                loadingIndicator.style.display = 'none';
+                trainDetailsContainer.style.display = 'block';
+                displayTrainNumber.textContent = data.trainNumber;
+                displayTrainName.textContent = data.trainName;
+                displaySource.textContent = data.source;
+                displayDestination.textContent = data.destination;
+                displayDepartureTime.textContent = data.departureTime;
+                displayArrivalTime.textContent = data.arrivalTime;
+                displayTrainSchedule.innerHTML = ''; // Clear previous schedule
+
+                data.trainScheduleList.forEach(schedule => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <strong>Station:</strong> ${schedule.stationName} (${schedule.stationCode}),
+                        <strong>Arrival:</strong> ${schedule.arrivalTime || 'N/A'},
+                        <strong>Departure:</strong> ${schedule.departureTime || 'N/A'},
+                        <strong>Distance:</strong> ${schedule.distance} km
+                    `;
+                    displayTrainSchedule.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                loadingIndicator.style.display = 'none';
+                errorMessageContainer.textContent = error.message;
+                errorMessageContainer.style.display = 'block';
+                trainDetailsContainer.style.display = 'none';
+                console.error('Error:', error);
+            });
+    });
+</script>
+</body>
+</html>

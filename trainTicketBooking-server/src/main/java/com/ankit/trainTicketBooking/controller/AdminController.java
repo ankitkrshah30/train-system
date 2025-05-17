@@ -18,6 +18,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -52,6 +53,7 @@ public class AdminController {
             userRepository.save(user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
+            System.out.println(e);
             return new ResponseEntity<>("Some error:",HttpStatus.BAD_REQUEST);
         }
     }
@@ -63,6 +65,7 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         catch(Exception e){
+            System.out.println(e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

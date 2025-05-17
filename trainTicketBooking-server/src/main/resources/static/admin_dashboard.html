@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the admin dashboard */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 3rem auto; /* Increased top/bottom margin */
+            padding: 2.5rem;
+            background-color: #ffffff;
+            border-radius: 1.25rem;
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1), 0 10px 15px -8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #d1d5db;
+        }
+
+        .dashboard-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            text-shadow: 2px 2px 6px rgba(79, 70, 229, 0.2);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 2.5rem; /* Increased gap */
+            margin-bottom: 3rem; /* Increased margin */
+        }
+
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-container {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        .card {
+            background-color: #ffffff; /* Fallback if image doesn't load */
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.15), 0 3px 7px -3px rgba(0, 0, 0, 0.07);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+            position: relative; /* For pseudo-element overlay and z-indexing content */
+        }
+
+        .card::before { /* Overlay for better text readability over background images */
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.4); /* Dark semi-transparent overlay */
+            z-index: 0; /* Behind text content */
+            border-radius: 1rem; /* Match card's border radius */
+            pointer-events: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .card:hover::before {
+            background-color: rgba(0, 0, 0, 0.5); /* Slightly darker overlay on hover */
+        }
+
+
+        .card:hover {
+            transform: translateY(-0.75rem) scale(1.03); /* Enhanced hover */
+            box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.25), 0 8px 12px -4px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+        }
+
+        .card-title,
+        .card-description,
+        .card-link {
+            position: relative;
+            z-index: 1;
+            color: #ffffff; /* White text for contrast against overlay/image */
+        }
+
+        .card-title {
+            font-size: 1.85rem; /* Slightly larger */
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+        }
+
+        .card-description {
+            margin-bottom: 2rem;
+            line-height: 1.75;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+            flex-grow: 1; /* Allow description to take available space */
+        }
+
+        .card-link {
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 1.6rem;
+            border-radius: 0.5rem;
+            background-image: linear-gradient(to right, #6d28d9, #4f46e5);
+            transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            align-self: flex-start; /* Align button to the start of the flex item (bottom of card) */
+        }
+
+        .card-link:hover {
+            background-image: linear-gradient(to right, #4c1d95, #4338ca);
+            transform: translateY(-0.25rem);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-link svg {
+            margin-left: 0.75rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            stroke-width: 2;
+            color: #ffffff;
+        }
+
+        .section-heading {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #374151;
+            margin-top: 3rem; /* Add space above section headings */
+            margin-bottom: 2rem;
+            border-bottom: 4px solid #6d28d9;
+            padding-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .user-list li {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            color: #374151;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
+        }
+
+        .user-list li:hover {
+            background-color: #f9fafb;
+            transform: translateX(0.35rem) scale(1.01);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
+        }
+
+        .user-list li .font-semibold { /* User name */
+            color: #4f46e5;
+            margin-right: 0.5rem; /* Space between name and userid */
+        }
+        .user-list li .text-gray-600 { /* User ID */
+            margin-right: auto; /* Push status badge and button to the right */
+            padding-left: 0.25rem;
+        }
+
+
+        .delete-button {
+            background-color: #ef4444;
+            color: #ffffff;
+            padding: 0.8rem 1.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            box-shadow: 0 2px 5px rgba(239, 68, 68, 0.2);
+            font-weight: 500;
+            margin-left: 1rem; /* Space from status badge */
+        }
+
+        .delete-button:hover {
+            background-color: #dc2626;
+            transform: translateY(-0.25rem);
+            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+        }
+
+        .delete-button:active{
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(220,38,38,0.2);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.6rem 1.2rem;
+            border-radius: 9999px; /* Pill shape */
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background-color: #10b981; /* Brighter Green */
+            color: #ffffff;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
+
+        .status-inactive {
+            background-color: #9ca3af; /* Slightly darker gray */
+            color: #1f2937; /* Darker text for better readability */
+            box-shadow: 0 2px 4px rgba(156, 163, 175, 0.3);
+        }
+
+        /* Styles for Train List for Seat Management */
+        .train-list-for-seats-container { /* Renamed from #train-list-for-seats for consistency if needed */
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .train-list-item-seats {
+            background-color: #f8f9fa;
+            padding: 1.25rem 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .train-list-item-seats:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .train-item-details-seats {
+            flex-grow: 1;
+        }
+
+        .train-item-name-seats {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4f46e5; /* Primary color for name */
+            margin-bottom: 0.25rem;
+        }
+
+        .train-item-meta-seats {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .add-seats-button {
+            background-color: #2563eb; /* Blue */
+            color: #ffffff;
+            padding: 0.7rem 1.2rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            box-shadow: 0 2px 5px rgba(37, 99, 235, 0.2);
+            font-weight: 500;
+            white-space: nowrap; /* Prevent button text from wrapping */
+        }
+
+        .add-seats-button:hover {
+            background-color: #1e40af; /* Darker blue */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+        }
+
+        .add-seats-button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+        }
+
+
+        /* Existing Train Schedule Styles */
+        .train-schedule {
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .train-schedule:hover {
+            transform: translateY(-0.5rem) scale(1.02);
+            box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.15), 0 6px 10px -3px rgba(0, 0, 0, 0.08);
+        }
+
+        .train-schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem; /* Increased margin */
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #6d28d9; /* Primary color variant */
+            position: relative;
+            z-index: 1;
+        }
+
+        .train-name { /* This is for schedule.train.name */
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: #4f46e5; /* Primary color */
+            position: relative;
+            z-index: 1;
+        }
+
+        .schedule-time {
+            font-size: 1.1rem;
+            color: #4338ca; /* Darker shade of primary */
+            font-style: italic;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .route-info {
+            font-size: 1.15rem;
+            color: #1f2937; /* Darker text */
+            margin-bottom: 1rem;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        .train-schedule p { /* Target generic p tags within schedule for date/status */
+            position: relative;
+            z-index: 1;
+            color: #374151;
+            margin-bottom: 0.6rem; /* Slightly more space */
+            font-size: 1rem;
+        }
+
+        .train-schedule p:last-child {
+            margin-bottom: 0;
+        }
+
+
+        .train-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.1; /* Further reduced opacity for better text contrast */
+            border-radius: 0.75rem;
+            z-index: 0;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100">
+<div class="dashboard-container">
+    <h1 class="dashboard-title">Admin Dashboard</h1>
+
+    <div class="grid-container">
+        <div class="card" style="background-image: url('https://images.unsplash.com/photo-1516235412897-08924041bd29?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center;">
+            <h2 class="card-title">Manage Trains</h2>
+            <p class="card-description">Add, update, and manage train entities and their base configurations.</p>
+            <a href="/traincreate.html" class="card-link">
+                Go to Train Management
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0-4l-4 4m3-4v12m-3-4l-4-4m0 4l4-4" />
+                </svg>
+            </a>
+        </div>
+
+        <div class="card" style="background-image: url('https://images.unsplash.com/photo-1562089622-77898599e49e?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center;">
+            <h2 class="card-title">Manage Schedules</h2>
+            <p class="card-description">Create, update, and manage train schedules for passenger bookings.</p>
+            <a href="/admin/schedule/create" class="card-link">
+                Go to Schedule Management
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0-4l-4 4m3-4v12m-3-4l-4-4m0 4l4-4" />
+                </svg>
+            </a>
+        </div>
+
+        <div class="card" style="background-image: url('https://images.unsplash.com/photo-1592455325752-5afe52414838?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center;">
+            <h2 class="card-title">Manage Users</h2>
+            <p class="card-description">View and manage user accounts and roles with simplicity.</p>
+            <a href="/admin/users" class="card-link">
+                Go to User Management
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0-4l-4 4m3-4v12m-3-4l-4-4m0 4l4-4" />
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <section>
+        <h2 class="section-heading">User List</h2>
+        <ul class="user-list" id="user-list">
+        </ul>
+    </section>
+
+    <section>
+        <h2 class="section-heading">Train Inventory & Seats</h2>
+        <div id="train-list-for-seats-container" class="train-list-for-seats-container">
+        </div>
+    </section>
+
+    <section>
+        <h2 class="section-heading">Train Schedules</h2>
+        <div id="train-schedules">
+        </div>
+    </section>
+</div>
+
+<script>
+    // Function to fetch and display user list
+    function fetchAndDisplayUsers() {
+        fetch('/admin/get-user') // Replace with your actual API endpoint
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        console.warn('Fetch /admin/users failed (404), using dummy data.');
+                        return [
+                            { name: 'Alice Wonderland', userid: 'alice01', active: true },
+                            { name: 'Bob The Builder', userid: 'bobbie', active: false },
+                            { name: 'Charlie Brown', userid: 'chuck', active: true }
+                        ];
+                    }
+                    throw new Error(`Failed to fetch users: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(users => {
+                const userList = document.getElementById('user-list');
+                userList.innerHTML = '';
+                if (users.length === 0) {
+                    userList.innerHTML = '<li>No users found.</li>';
+                    return;
+                }
+                users.forEach(user => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <span class="font-semibold">${user.name}</span>
+                        <span class="text-gray-600">(${user.userid})</span>
+                        <span class="status-badge ${user.active ? 'status-active' : 'status-inactive'}">
+                            ${user.active ? 'Active' : 'Inactive'}
+                        </span>
+                        <button class="delete-button" data-user-id="${user.userid}">Delete</button>
+                    `;
+                    userList.appendChild(listItem);
+                });
+                userList.querySelectorAll('.delete-button').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const userId = this.dataset.userId;
+                        console.log(`Attempting to delete user: ${userId}`);
+                        this.parentNode.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                        this.parentNode.style.opacity = '0';
+                        this.parentNode.style.transform = 'translateX(-20px)';
+                        setTimeout(() => this.parentNode.remove(), 500);
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching users:', error);
+                const userList = document.getElementById('user-list');
+                userList.innerHTML = `<li>Error loading users: ${error.message}. Displaying sample data.</li>`;
+                const dummyUsers = [ /* Dummy data for display */ ];
+                // Code to display dummy users as before
+            });
+    }
+
+    // Function to fetch and display all trains for seat management
+function fetchAndDisplayAllTrains() {
+    fetch('/train/all')
+        .then(response => {
+            console.log('Raw response from /train/all:', response);
+            if (!response.ok) {
+                return response.text().then(text => {
+                    let errorMessage = `Failed to fetch trains: ${response.status} ${response.statusText}`;
+                    try {
+                        const errorBody = JSON.parse(text);
+                        console.error('Error body from backend (parsed):', errorBody);
+                        errorMessage = typeof errorBody === 'string' ? errorBody : (errorBody.message || text);
+                    } catch (e) {
+                        console.error('Error body from backend (raw text):', text);
+                        errorMessage = text || errorMessage;
+                    }
+                    throw new Error(errorMessage);
+                });
+            }
+            return response.json();
+        })
+        .then(trains => {
+            console.log('Fetched trains data (parsed JSON):', trains);
+            const trainListContainer = document.getElementById('train-list-for-seats-container');
+            trainListContainer.innerHTML = '';
+
+            if (!trains || trains.length === 0) {
+                trainListContainer.innerHTML = '<p class="text-gray-600 p-4">No trains found in the database.</p>';
+                return;
+            }
+
+            if (trains.length > 0) {
+                console.log('First train object (inspect its properties here):', trains[0]);
+            }
+
+            trains.forEach(train => {
+                const trainItemDiv = document.createElement('div');
+                trainItemDiv.className = 'train-list-item-seats';
+
+                const trainId = train.id || train.trainId || train.trainID;
+                const trainName = train.name || train.trainName;
+                const trainNumber = train.number || train.trainNumber;
+
+                console.log(`  Processing Train - ID: ${trainId}, Name: ${trainName}, Number: ${trainNumber}`);
+                if (trainName === undefined || trainId === undefined) {
+                    console.warn(`  WARNING: Potential field name mismatch for train object. Received:`, JSON.stringify(train));
+                }
+
+                trainItemDiv.innerHTML = `
+                    <div class="train-item-details-seats">
+                        <h4 class="train-item-name-seats">${trainName || 'N/A'}</h4>
+                        <p class="train-item-meta-seats">Number: ${trainNumber || 'N/A'}</p>
+                    </div>
+                    <button class="add-seats-button" data-train-number="${trainNumber || 'N/A'}">Add Seats to train</button>
+                `;
+                trainListContainer.appendChild(trainItemDiv);
+            });
+
+            // Add event listeners to "Add/Manage Seats" buttons
+            trainListContainer.querySelectorAll('.add-seats-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const clickedTrainNumber = this.dataset.trainNumber;
+                    if (clickedTrainNumber && clickedTrainNumber !== 'N/A') {
+                        console.log(`Sending POST request to /seats/create/${clickedTrainNumber}`);
+
+                        // Create a form element dynamically
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/seats/create/${clickedTrainNumber}`;
+
+                        // You might need to add hidden input fields to send additional data
+                        //  For example, if you need to send the number of seats:
+                        // const seatsInput = document.createElement('input');
+                        // seatsInput.type = 'hidden';
+                        // seatsInput.name = 'seats';  //  Name of the parameter expected by Spring Boot
+                        // seatsInput.value = '10';    //  The value (e.g., number of seats to add)
+                        // form.appendChild(seatsInput);
+
+                        // Append the form to the body and submit it
+                        document.body.appendChild(form);
+                        form.submit();
+
+                        //  Important:  The server will respond to this form submission.
+                        //  If the server returns HTML (e.g., a success page, or an error page),
+                        //  the browser will navigate to that page.  If the server returns JSON,
+                        //  you'll need to use fetch() instead of a form, and handle the JSON response.
+
+
+                    } else {
+                        console.error('Cannot navigate: Train Number is missing or invalid.');
+                        alert('Error: Could not get Train Number for seat configuration.');
+                    }
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Error in fetchAndDisplayAllTrains:', error);
+            const trainListContainer = document.getElementById('train-list-for-seats-container');
+            trainListContainer.innerHTML = `<p class="text-red-600 p-4">Error: ${error.message}</p>`;
+        });
+}
+
+
+
+
+    // Function to fetch and display train schedules
+    function fetchAndDisplayTrainSchedules() {
+        fetch('/api/schedules') // Replace with your actual API endpoint
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        console.warn('Fetch /api/schedules failed (404), using dummy data.');
+                        return [
+                            { train: { name: 'Express 101' }, departureTime: '08:00 AM', arrivalTime: '12:00 PM', departureStation: 'North Station', arrivalStation: 'South Station', date: '2025-05-20', status: 'On Time', imageUrl: 'https://images.unsplash.com/photo-1557050541-199155772532?q=80&w=1200&auto=format&fit=crop' },
+                            { train: { name: 'Bullet X2' }, departureTime: '10:30 AM', arrivalTime: '01:30 PM', departureStation: 'Central City', arrivalStation: 'Metro Hub', date: '2025-05-21', status: 'Delayed', imageUrl: 'https://images.unsplash.com/photo-1600070390024-3117069eda8a?q=80&w=1200&auto=format&fit=crop' }
+                        ];
+                    }
+                    throw new Error(`Failed to fetch train schedules: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(schedules => {
+                const schedulesContainer = document.getElementById('train-schedules');
+                schedulesContainer.innerHTML = '';
+                if (schedules.length === 0) {
+                    schedulesContainer.innerHTML = '<p>No train schedules available at the moment.</p>';
+                    return;
+                }
+                schedules.forEach(schedule => {
+                    const scheduleDiv = document.createElement('div');
+                    scheduleDiv.className = 'train-schedule';
+                    const imageUrl = schedule.imageUrl || 'https://images.unsplash.com/photo-1506606401543-2e73709cebb4?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+                    scheduleDiv.innerHTML = `
+                        <img class="train-image" src="${imageUrl}" alt="Train image for ${schedule.train.name}">
+                        <div class="train-schedule-header">
+                            <h3 class="train-name">${schedule.train.name}</h3>
+                            <span class="schedule-time">
+                                ${schedule.departureTime} - ${schedule.arrivalTime}
+                            </span>
+                        </div>
+                        <p class="route-info">
+                            <strong>Route:</strong> ${schedule.departureStation} to ${schedule.arrivalStation}
+                        </p>
+                        <p><strong>Date:</strong> ${schedule.date}</p>
+                        <p><strong>Status:</strong> <span style="font-weight: bold; color: ${schedule.status === 'On Time' ? '#10b981' : (schedule.status === 'Delayed' ? '#ef4444' : '#4f46e5')}">${schedule.status}</span></p>
+                    `;
+                    schedulesContainer.appendChild(scheduleDiv);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching schedules:', error);
+                const schedulesContainer = document.getElementById('train-schedules');
+                schedulesContainer.innerHTML = `<p>Error loading train schedules: ${error.message}.</p>`;
+                // Dummy data display for schedules on error
+            });
+    }
+
+    // Call the functions to populate the dashboard when the DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchAndDisplayUsers();
+        fetchAndDisplayAllTrains(); // Added call to the new function
+        fetchAndDisplayTrainSchedules();
+    });
+</script>
+</body>
+</html>

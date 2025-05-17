@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50; /* Darker text for better readability */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 550px; /* Slightly wider container */
+            background-color: #ffffff;
+            padding: 40px; /* Increased padding */
+            border-radius: 10px; /* More rounded corners */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+            transition: transform 0.2s ease, box-shadow 0.2s ease; /* Added transition */
+        }
+        .container:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #007bff;
+            margin-bottom: 35px; /* Increased margin */
+            text-align: center;
+            font-weight: 600; /* Medium font weight */
+            letter-spacing: -0.02em;
+        }
+        .form-group label {
+            font-weight: 500;
+            color: #34495e; /* Darker label color */
+            margin-bottom: 8px; /* Added margin */
+            display: block;
+            transition: color 0.3s ease; /* Label transition */
+        }
+        .form-group label:hover {
+            color: #007bff; /* Highlight on label hover */
+        }
+        .form-control {
+            padding: 12px 15px; /* Slightly increased padding */
+            border: 1px solid #d1d8e3; /* Lighter border */
+            border-radius: 6px; /* Slightly more rounded */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Added transition */
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15); /* Softer focus shadow */
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px; /* More rounded button */
+            font-weight: 500; /* Medium font weight */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Added shadow */
+            width: 100%;
+            display: inline-flex; /* Use inline-flex for better alignment */
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Increased shadow on hover */
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .alert {
+            margin-top: 25px; /* Increased margin */
+            padding: 15px 20px; /* Slightly increased padding */
+            border-radius: 6px; /* More rounded alert */
+            font-size: 0.95rem; /* Slightly increased font size */
+            font-weight: 400;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            animation: fadeInAlert 0.3s forwards;
+        }
+        @keyframes fadeInAlert {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 6px;
+        }
+        /* Added new styles for icons and better spacing */
+        .input-group {
+            margin-bottom: 25px; /* Increased margin between form groups */
+        }
+        .input-group-prepend .input-group-text {
+            background-color: #e9ecef;
+            border: 1px solid #d1d8e3;
+            border-radius: 6px 0 0 6px;
+            color: #495057;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+        }
+        .form-control {
+            border-radius: 0 6px 6px 0;
+        }
+        .icon {
+            margin-right: 8px; /* Icon spacing */
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Sign Up</h2>
+    <form id="signup-form">
+        <div class="form-group">
+            <label for="userid">User ID:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 4 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                            </svg>
+                        </span>
+                </div>
+                <input type="text" class="form-control" id="signup-userid" name="userid" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-2 3.5c-1.55 0-2.9-.88-2.9-2.23 0-1.35 1.35-2.23 2.9-2.23s2.9.88 2.9 2.23c0 1.35-1.35 2.23-2.9 2.23z"/>
+                                <path d="M16 12v-2a4 4 0 0 0-4-4v-3c0-2.21-1.79-4-4-4s-4 1.79-4 4v3a4 4 0 0 0-4 4v2a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4z"/>
+                            </svg>
+                        </span>
+                </div>
+                <input type="text" class="form-control" id="signup-name" name="name" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
+                                <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l8 4.975 8-4.975V4.697z"/>
+                            </svg>
+                        </span>
+                </div>
+                <input type="email" class="form-control" id="signup-email" name="email" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M2.52.69a1 1 0 0 1 .973-.69h9a1 1 0 0 1 .973.69l.432 4.865a1 1 0 0 1-.973 1.185H3.92a1 1 0 0 1-.973-1.185L2.52.69z"/>
+                                <path d="M15 11a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v3zM4 11a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v3zM7 11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v3z"/>
+                                <path fill-rule="evenodd" d="M15.372 14.688a1 1 0 0 0-1.009.151c-.935.526-1.944.91-2.983 1.132-1.039.223-2.183.35-3.356.35-1.173 0-2.317-.127-3.356-.35-1.039-.222-2.048-.606-2.982-1.132a1 1 0 0 0-1.01.151.64.64 0 0 0-.235.857l1.095 3.032a.85.85 0 0 0 .774.512h9.742a.85.85 0 0 0 .775-.512l1.096-3.032a.64.64 0 0 0-.235-.857z"/>
+                            </svg>
+                        </span>
+                </div>
+                <input type="tel" class="form-control" id="signup-phone" name="phone">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-key-fill" viewBox="0 0 16 16">
+                            <path d="M3.5 11.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zm-1-1a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0z"/>
+                            <path d="M15.883 4.924a1.52 1.52 0 0 1-1.077.435l-.38.085a1.5 1.5 0 0 1-1.1-.5l-1.687-1.685a1.5 1.5 0 0 1-.5-.11l-.08-.022a1.5 1.5 0 0 0-1.022.242L2.5 9.248V7a1 1 0 0 0-1-1H.5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1c0-.653.102-1.295.285-1.885a1.5 1.5 0 0 0 .71-.651l.663-.66a1.5 1.5 0 0 0 1.086-.22l1.685 1.68a1.5 1.5 0 0 0 1.485.61l.089.016a1.518 1.518 0 0 0 1.043-.493.9 0 0 0 .621-.926V7a.5.5 0 0 0-1 0v2.418zM14 10.5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v2z"/>
+                            </svg>
+                        </span>
+                </div>
+                <input type="password" class="form-control" id="signup-password" name="password" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+        <div id="alert-container" class="mt-4"></div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('signup-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const userid = document.getElementById('signup-userid').value;
+        const name = document.getElementById('signup-name').value;
+        const email = document.getElementById('signup-email').value;
+        const phone = document.getElementById('signup-phone').value;
+        const password = document.getElementById('signup-password').value;
+        const userData = { userid, name, email, phone, password };
+
+        fetch('http://localhost:8080/public/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Changed to use response.json() to parse the error message
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || 'Sign up failed'); // Use a default message if none provided
+                });
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log('Success:', data);
+            showAlert('success', 'Sign up successful! You can now log in.');
+            document.getElementById('signup-form').reset();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            showAlert('danger', 'Sign up failed: ' + error.message); // Display the message from the backend
+        });
+    });
+
+    function showAlert(type, message) {
+        const alertContainer = document.getElementById('alert-container');
+        alertContainer.innerHTML = '';
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        alertContainer.appendChild(alertDiv);
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

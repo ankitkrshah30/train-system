@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 450px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #2563eb;
+            margin-bottom: 35px;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .form-group label:hover {
+            color: #2563eb;
+        }
+
+        .form-control {
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 1rem;
+            color: #2d3748;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.16);
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary:hover {
+            background-color: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .alert {
+            margin-top: 25px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 400;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            animation: fadeInAlert 0.3s forwards;
+        }
+
+        @keyframes fadeInAlert {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+        }
+
+        .alert-success {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #d1fae5;
+            border-radius: 6px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group-prepend .input-group-text {
+            background-color: #edf2f7;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px 0 0 6px;
+            color: #4a5568;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-control {
+            border-radius: 0 6px 6px 0;
+        }
+
+        .icon {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+        }
+
+        .input-group-prepend {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-control:focus + .input-group-prepend .input-group-text {
+            border-color: #2563eb;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .forgot-password {
+            font-size: 0.9rem;
+            color: #4a5568;
+            text-decoration: none;
+        }
+
+        .forgot-password:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        .text-muted {
+            color: #718096;
+        }
+
+        .login-footer {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .social-login-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .btn-social {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 0.5rem;
+            border: none;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-social:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-facebook {
+            background-color: #3b5998;
+            color: white;
+        }
+
+        .btn-facebook:hover {
+            background-color: #2a4386;
+        }
+
+        .btn-google {
+            background-color: #dc4e41;
+            color: white;
+        }
+
+        .btn-google:hover {
+            background-color: #c33629;
+        }
+
+        .btn-apple {
+            background-color: #000000;
+            color: white;
+        }
+
+        .btn-apple:hover {
+            background-color: #222222;
+        }
+
+        .icon-social {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Login</h2>
+    <form id="login-form" action="/login" method="post">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                            </svg>
+                        </span>
+                </div>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-key-fill" viewBox="0 0 16 16">
+                                <path d="M3.5 11.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/>
+                                <path d="M3 9a3 3 0 0 1 6 0v1a4 4 0 0 0 8 0v-1a3 3 0 0 1-2-2V2a3 3 0 0 0-2-2H3s-1 0-1 1v7z"/>
+                            </svg>
+                        </span>
+                </div>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+        <div class="mt-3 text-center">
+            <a href="#" class="forgot-password">Forgot Password?</a>
+        </div>
+        <div class="login-footer">
+            <p class="text-muted">Or login with:</p>
+            <div class="social-login-buttons">
+                <button class="btn-social btn-facebook">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/2048px-2021_Facebook_icon.svg.png" alt="Facebook" class="icon-social">
+                    Facebook
+                </button>
+                <button class="btn-social btn-google">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" class="icon-social">
+                    Google
+                </button>
+                <button class="btn-social btn-apple">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" class="icon-social">
+                    Apple
+                </button>
+            </div>
+            <p class="text-muted">Don't have an account? <a href="/signup">Sign up</a></p>
+        </div>
+        <div id="alert-container" class="mt-4"></div>
+    </form>
+</div>
+
+<script>
+    function showAlert(type, message) {
+        const alertContainer = document.getElementById('alert-container');
+        alertContainer.innerHTML = '';
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        alertContainer.appendChild(alertDiv);
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

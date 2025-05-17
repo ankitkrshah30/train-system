@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <style>
+        /* Custom styles */
+        .card {
+            background-color: #1d4ed8;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            transform: translateY(-0.5rem);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.15), 0 3px 6px -1px rgba(0, 0, 0, 0.08);
+        }
+
+        .status-badge {
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background-color: #16a34a;
+            color: #f0fdf4;
+        }
+
+        .status-pending {
+            background-color: #f59e0b;
+            color: #fef08a;
+            animation: pulse 2s infinite;
+        }
+
+        .status-failed {
+            background-color: #dc2626;
+            color: #fee2e2;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .auth-card {
+            background-color: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .auth-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            color: #374151;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            background-color: #3b82f6;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .login-button:hover {
+            background-color: #2563eb;
+        }
+        .logout-button {
+            background-color: #dc2626;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .logout-button:hover {
+            background-color: #c81e1e;
+        }
+
+        .retry-button {
+            background-color: #3b82f6;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .retry-button:hover {
+            background-color: #2563eb;
+        }
+
+        .no-payments {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            background-color: #e5e7eb;
+            color: #4b5563;
+            margin-top: 2rem;
+            border: 1px solid #d1d5db;
+        }
+
+        .loading-skeleton {
+            background-color: #d1d5db;
+            animation: skeleton-pulse 1.5s infinite;
+            border-radius: 0.5rem;
+        }
+
+        @keyframes skeleton-pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-8 text-center">Payment History</h1>
+
+    <div id="auth-form" class="auth-card">
+        <h2 class="auth-title">Login</h2>
+        <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" class="form-input" placeholder="Enter your username">
+        </div>
+        <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" class="form-input" placeholder="Enter your password">
+        </div>
+        <button id="login-button" class="login-button">
+            <span>Login</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15.375a.375.375 0 010 .75H4.5m0-6h15.375a.375.375 0 010 .75H4.5m0 6v6" />
+            </svg>
+        </button>
+        <div id="auth-error" class="mt-4 text-red-500 text-sm" style="display: none;"></div>
+    </div>
+
+    <div id="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style="display: none;">
+        <div class="card">
+            <div class="loading-skeleton h-6 w-1/2 mb-4"></div>
+            <div class="loading-skeleton h-4 w-full mb-2"></div>
+            <div class="loading-skeleton h-4 w-3/4 mb-2"></div>
+            <div class="loading-skeleton h-4 w-1/2"></div>
+        </div>
+        <div class="card">
+            <div class="loading-skeleton h-6 w-1/2 mb-4"></div>
+            <div class="loading-skeleton h-4 w-full mb-2"></div>
+            <div class="loading-skeleton h-4 w-3/4 mb-2"></div>
+            <div class="loading-skeleton h-4 w-1/2"></div>
+        </div>
+        <div class="card">
+            <div class="loading-skeleton h-6 w-1/2 mb-4"></div>
+            <div class="loading-skeleton h-4 w-full mb-2"></div>
+            <div class="loading-skeleton h-4 w-3/4 mb-2"></div>
+            <div class="loading-skeleton h-4 w-1/2"></div>
+        </div>
+    </div>
+
+    <div id="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" style="display: none;" role="alert">
+        <strong class="font-bold">Error:</strong>
+        <span class="block sm:inline" id="error-message"></span>
+        <button id="retry-button" class="retry-button" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            Retry
+        </button>
+    </div>
+
+    <div id="no-payments" class="no-payments" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 mx-auto mb-4 text-gray-500">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8a6.75 6.75 0 016.75-6.75h4.5a6.75 6.75 0 016.75 6.75v8.25a6.75 6.75 0 01-6.75 6.75h-4.5a6.75 6.75 0 01-6.75-6.75V8zM16.5 9.75v-.75a.75.75 0 00-.75-.75h-1.5a.75.75 0 00-.75.75v.75m0 3v-3a.75.75 0 00-.75-.75H7.5a.75.75 0 00-.75.75v3m0 3.75v-1.5a.75.75 0 00-.75-.75H7.5a.75.75 0 00-.75.75v1.5M16.5 14.25v-1.5a.75.75 0 00-.75-.75h-1.5a.75.75 0 00-.75.75v1.5M16.5 14.25v-1.5a.75.75 0 00-.75-.75h-1.5a.75.75 0 00-.75.75v1.5" />
+        </svg>
+        <p class="text-gray-500 text-lg">No payments have been made yet.</p>
+    </div>
+
+    <div id="payment-history-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style="display: none;">
+    </div>
+    <div id="logout-button-container" style="display: none;" class="text-center mt-8">
+        <button id="logout-button" class="logout-button">
+            <span>Logout</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V4.5a3 3 0 116 0v4.5m-6-.75h6m-6 3h6m-3-3V15m3-3v3m-3 0h3m-9-6h4.5a3 3 0 110 6H5.25v-3m10.5-3c0 1.657-1.343 3-3 3s-3-1.343-3-3m6 0c0 1.657-1.343 3-3 3s-3-1.343-3-3" />
+            </svg>
+        </button>
+    </div>
+</div>
+
+<script>
+    const paymentHistoryList = document.getElementById('payment-history-list');
+    const loadingIndicator = document.getElementById('loading');
+    const errorContainer = document.getElementById('error');
+    const errorMessageDisplay = document.getElementById('error-message');
+    const noPaymentsMessage = document.getElementById('no-payments');
+    const retryButton = document.getElementById('retry-button');
+    const authForm = document.getElementById('auth-form');
+    const loginButton = document.getElementById('login-button');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const logoutButtonContainer = document.getElementById('logout-button-container');
+    const logoutButton = document.getElementById('logout-button');
+    let isLoggedIn = false;
+    let authToken = null;
+
+    function showError(message) {
+        errorMessageDisplay.textContent = message;
+        errorContainer.style.display = 'block';
+        loadingIndicator.style.display = 'none';
+        paymentHistoryList.style.display = 'none';
+        noPaymentsMessage.style.display = 'none';
+        authForm.style.display = 'none';
+        logoutButtonContainer.style.display = 'none';
+    }
+
+    async function fetchPaymentHistory() {
+        loadingIndicator.style.display = 'grid';
+        errorContainer.style.display = 'none';
+        noPaymentsMessage.style.display = 'none';
+        paymentHistoryList.style.display = 'none';
+        authForm.style.display = 'none';
+        logoutButtonContainer.style.display = 'block';
+
+        try {
+            // IMPORTANT:  Make sure this URL is correct and matches your Spring Boot backend endpoint
+            const response = await fetch("http://localhost:8080/user/payment-history", {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Basic ' + btoa(usernameInput.value + ":" + passwordInput.value), // Basic Auth
+                    'Content-Type': 'application/json'
+                },
+            });
+
+            if (!response.ok) {
+                let errorText = "Failed to fetch payment history.";
+                try {
+                     errorText = await response.text();
+                }catch(e){
+                    errorText = "Failed to fetch payment history.  No details provided.";
+                }
+
+                if (response.status === 401) {
+                    showError("Invalid credentials. Please log in again.");
+                    isLoggedIn = false;
+                    authToken = null;
+                    sessionStorage.removeItem('authToken');
+                    authForm.style.display = 'block';
+                    logoutButtonContainer.style.display = 'none';
+                } else {
+                    showError(`${errorText}  Status: ${response.status}`);
+                }
+                return;
+            }
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                displayPaymentHistory(data);
+            } else {
+                noPaymentsMessage.style.display = 'block';
+            }
+        } catch (error) {
+            showError(error.message);
+        } finally {
+            loadingIndicator.style.display = 'none';
+        }
+    }
+
+    function displayPaymentHistory(payments) {
+        paymentHistoryList.innerHTML = '';
+        payments.forEach(payment => {
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            // Format the dates from the timestamp
+            const paymentDate = new Date(payment.paymentDate).toLocaleDateString(undefined, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            const bookingDate = new Date(payment.bookingId.date).toLocaleDateString(undefined, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            card.innerHTML = `
+                <h2 class="text-xl font-semibold text-gray-200 mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8a6.75 6.75 0 016.75-6.75h4.5a6.75 6.75 0 016.75 6.75v8.25a6.75 6.75 0 01-6.75 6.75h-4.5a6.75 6.75 0 01-6.75-6.75V8zM16.5 9.75v-.75a.75.75 0 00-.75-.75h-1.5a.75.75 0 00-.75.75v.75m0 3v-3a.75.75 0 00-.75-.75H7.5a.75.75 0 00-.75.75v3m0 3.75v-1.5a.75.75 0 00-.75-.75H7.5a.75.75 0 00-.75.75v1.5M16.5 14.25v-1.5a.75.75 0 00-.75-.75h-1.5a.75.75 0 00-.75.75v1.5M16.5 14.25v-1.5a.75.75 0 00-.75-.75h-1.5a.75.75 0 00-.75.75v1.5" />
+                    </svg>
+                    Payment #${payment.paymentId.timestamp}
+                </h2>
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-300">Amount:</span>
+                    <span class="text-xl font-bold text-white">$${payment.amount.toFixed(2)}</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-300">Payment Date:</span>
+                    <span class="text-white flex items-center gap-1">
+                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25a.75.75 0 01-.75.75H3a.75.75 0 01-.75-.75V3a2.25 2.25 0 012.25-2.25h1.5a.75.75 0 01.75.75zM16.5 3v2.25a.75.75 0 01-.75.75H12a.75.75 0 01-.75-.75V3a2.25 2.25 0 012.25-2.25h1.5a.75.75 0 01.75.75zM21.75 6h-1.5a.75.75 0 00-.75.75v1.5a.75.75 0 00.75.75h1.5a.75.75 0 01.75-.75V6.75a.75.75 0 00-.75-.75zM3 12h1.5a.75.75 0 00.75-.75v-1.5a.75.75 0 00-.75-.75H3a.75.75 0 01-.75.75v1.5a.75.75 0 01.75.75zM12 12h1.5a.75.75 0 00.75-.75v-1.5a.75.75 0 00-.75-.75H12a.75.75 0 01-.75.75v1.5a.75.75 0 00.75.75zM18.75 12h1.5a.75.75 0 00.75-.75v-1.5a.75.75 0 00-.75-.75h-1.5a.75.75 0 01-.75.75v1.5a.75.75 0 00.75.75zM6.75 18h-1.5a.75.75 0 01-.75-.75v-1.5a.75.75 001.75-.75h1.5a.75.75 0 00.75.75v1.5a.75.75 0 01-.75.75zM15 18h-1.5a.75.75 0 01-.75-.75v-1.5a.75.75 0 00-.75-.75h1.5a.75.75 0 00.75.75v1.5a.75.75 0 01-.75.75zM18.75 18h-1.5a.75.75 0 01-.75-.75v-1.5a.75.75 0 00-.75-.75h1.5a.75.75 0 00.75.75v1.5a.75.75 0 01-.75.75z" />
+                        </svg>
+                        ${paymentDate}
+                    </span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-300">Booking Date:</span>
+                    <span class="text-white flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25a.75.75 0 01-.75.75H3a.75.75 0 01-.75-.75V3a2.25 2.25 0 012.25-2.25h1.5a.75.75 0 01.75.75zM16.5 3v2.25a.75.75 0 01-.75.75H12a.75.75 0 01-.75-.75V3a2.25 2.25 0 012.25-2.25h1.5a.75.75 0 01.75.75zM21.75 6h-1.5a.75.75 0 00-.75.75v1.5a.75.75 0 00.75.75h1.5a.75.75 0 01.75-.75V6.75a.75.75 0 00-.75-.75zM3 12h1.5a.75.75 0 00.75-.75v-1.5a.75.75 0 00-.75-.75H3a.75.75 0 01-.75.75v1.5a.75.75 0 01.75.75zM12 12h1.5a.75.75 0 00.75-.75v-1.5a.75.75 0 00-.75-.75H12a.75.75 0 01-.75.75v1.5a.75.75 0 00.75.75zM18.75 12h1.5a.75.75 0 00.75-.75v-1.5a.75.75 0 00-.75-.75h-1.5a.75.75 0 01-.75.75v1.5a.75.75 0 00.75.75zM6.75 18h-1.5a.75.75 0 01-.75-.75v-1.5a.75.75 0 01.75-.75h1.5a.75.75 0 00.75.75v1.5a.75.75 0 01-.75.75zM15 18h-1.5a.75.75 0 01-.75-.75v-1.5a.75.75 0 00-.75-.75h1.5a.75.75 0 00.75.75v1.5a.75.75 0 01-.75.75zM18.75 18h-1.5a.75.75 0 01-.75-.75v-1.5a.75.75 0 00-.75-.75h1.5a.75.75 0 00.75.75v1.5a.75.75 0 01-.75.75z" />
+                        </svg>
+                        ${bookingDate}
+                    </span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-300">Booking ID:</span>
+                    <span class="text-white">${payment.bookingId.timestamp}</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-300">Payment Status:</span>
+                    <span class="status-badge ${payment.paymentStatus === 'confirmed' ? 'status-success' : payment.paymentStatus === 'pending' ? 'status-pending' : 'status-failed'}">${payment.paymentStatus}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-300">Payment Successful:</span>
+                    <span class="text-white">${payment.paymentSuccessful ? 'Yes' : 'No'}</span>
+                </div>
+            `;
+            paymentHistoryList.appendChild(card);
+        });
+        paymentHistoryList.style.display = 'grid';
+    }
+
+    function handleLogin() {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!username || !password) {
+            showError("Please enter both username and password.");
+            return;
+        }
+
+        // In a real application, you would send this to your backend for verification
+        // For this example, we'll just simulate a successful login
+        isLoggedIn = true;
+        //  authToken = 'dummy_auth_token'; //  Replace with actual token from your backend
+        sessionStorage.setItem('authToken', btoa(username + ":" + password));
+        authForm.style.display = 'none';
+        fetchPaymentHistory(); // Fetch data after successful login
+        logoutButtonContainer.style.display = 'block';
+    }
+
+    function handleLogout() {
+        isLoggedIn = false;
+        authToken = null;
+        sessionStorage.removeItem('authToken');
+        usernameInput.value = '';
+        passwordInput.value = '';
+        paymentHistoryList.innerHTML = '';
+        paymentHistoryList.style.display = 'none';
+        noPaymentsMessage.style.display = 'none';
+        errorContainer.style.display = 'none';
+        authForm.style.display = 'block';
+        logoutButtonContainer.style.display = 'none';
+    }
+
+    // Event Listeners
+    loginButton.addEventListener('click', handleLogin);
+    retryButton.addEventListener('click', fetchPaymentHistory);
+    logoutButton.addEventListener('click', handleLogout);
+
+    // Check for existing session on page load
+    if (sessionStorage.getItem('authToken')) {
+        isLoggedIn = true;
+        authToken = sessionStorage.getItem('authToken');
+        authForm.style.display = 'none';
+        fetchPaymentHistory();
+        logoutButtonContainer.style.display = 'block';
+    } else {
+        authForm.style.display = 'block';
+        logoutButtonContainer.style.display = 'none';
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f4f8 100%);
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: #a7bcf5;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-bottom: 35px;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            text-shadow: 1px 1px 2px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .form-group label:hover {
+            color: #2980b9;
+        }
+
+        .form-control {
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 1rem;
+            color: #2d3748;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .btn-primary {
+            background-image: linear-gradient(to right, #3498db 0%, #217dbb 100%);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary:hover {
+            background-image: linear-gradient(to right, #2980b9 0%, #1e6091 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .alert {
+            margin-top: 25px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 400;
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: fadeInAlert 0.3s forwards;
+        }
+
+        @keyframes fadeInAlert {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #d1fae5;
+        }
+
+        #response-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            animation-delay: 0.3s;
+        }
+
+        #response-container.show {
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeInResponse 0.3s forwards;
+        }
+
+        @keyframes fadeInResponse {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #response-message {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #2d3748;
+            text-align: left;
+            line-height: 1.7;
+        }
+
+        #loading-indicator {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group-prepend .input-group-text {
+            background-color: #edf2f7;
+            border: 1px solid #e2e8f0;
+            border-right: none;
+            border-radius: 6px 0 0 6px;
+            color: #4a5568;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .input-group-prepend .input-group-text svg {
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 6px 6px 0;
+            border-left: none;
+        }
+
+        .input-group:focus-within .input-group-prepend .input-group-text {
+            border-color: #3498db;
+            background-color: #e0f7fa;
+            color: #217dbb;
+        }
+
+        .input-group:focus-within .input-group-prepend .input-group-text svg {
+            fill: #217dbb;
+        }
+
+        .input-group .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .input-group-prepend {
+            display: flex;
+            align-items: center;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Ask AI</h2>
+    <form id="ai-question-form">
+        <div class="form-group">
+            <label for="question">Your Question:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.03a.65.65 0 1 0-1.293 0 1.73 1.73 0 0 0-.63 1.403c-.034.17-.043.328-.043.487v.08a.65.65 0 0 0 1.293 0v-.08c0-.159.009-.317.043-.487a1.73 1.73 0 0 0 .63-1.403zM8 10.5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5z"/>
+                            </svg>
+                        </span>
+                </div>
+                <input type="text" class="form-control" id="question" name="question" placeholder="Enter your question here..." required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Get Answer</button>
+        <div id="loading-indicator">Loading...</div>
+        <div id="response-container" class="mt-4">
+            <p id="response-message"></p>
+        </div>
+        <div id="alert-container" class="mt-4"></div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('ai-question-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const question = document.getElementById('question').value.trim();
+        const responseContainer = document.getElementById('response-container');
+        const responseMessage = document.getElementById('response-message');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        if (!question) {
+            showAlert('danger', 'Please enter your question.');
+            return;
+        }
+
+        loadingIndicator.style.display = 'block';
+        responseContainer.classList.remove('show');
+        responseMessage.textContent = '';
+
+        const requestData = {
+            question: question
+        };
+
+        fetch('http://localhost:8080/ai/ask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData),
+        })
+        .then(response => {
+            console.log("Raw response:", response);
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || `Failed to get answer (HTTP ${response.status})`);
+                }).catch(() => {
+                    return response.text().then(text => {
+                        throw new Error(`Failed to get answer (HTTP ${response.status}): ${text}`);
+                    });
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+            loadingIndicator.style.display = 'none';
+            responseContainer.classList.add('show');
+            // Check the structure of the response and extract the answer
+            let answerText = 'No answer found.'; // Default message
+            if (
+                typeof data === 'object' &&
+                data !== null &&
+                Array.isArray(data.candidates) &&
+                data.candidates.length > 0 &&
+                typeof data.candidates[0] === 'object' &&
+                data.candidates[0] !== null &&
+                typeof data.candidates[0].content === 'object' &&
+                data.candidates[0] !== null &&
+                Array.isArray(data.candidates[0].content.parts) &&
+                data.candidates[0].content.parts.length > 0 &&
+                typeof data.candidates[0].content.parts[0] === 'object' &&
+                data.candidates[0].content.parts[0] !== null &&
+                typeof data.candidates[0].content.parts[0].text === 'string'
+            ) {
+                answerText = data.candidates[0].content.parts[0].text;
+            }
+
+            // Format the answer for better readability
+            const formattedAnswer = formatTrainInfo(answerText);
+            responseMessage.innerHTML = formattedAnswer;
+            responseMessage.className = 'text-gray-800';
+            document.getElementById('ai-question-form').reset();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            loadingIndicator.style.display = 'none';
+            responseContainer.classList.add('show');
+            responseMessage.textContent = 'Error: ' + error.message;
+            responseMessage.className = 'text-red-600';
+            showAlert('danger', 'Error: ' + error.message);
+        });
+    });
+
+    function showAlert(type, message) {
+        const alertContainer = document.getElementById('alert-container');
+        alertContainer.innerHTML = '';
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        requestAnimationFrame(() => {
+             alertContainer.appendChild(alertDiv);
+        });
+        setTimeout(() => {
+            if (alertDiv.parentElement) {
+                 alertDiv.style.opacity = '0';
+                 alertDiv.style.transform = 'translateY(-10px)';
+                 setTimeout(() => alertDiv.remove(), 300);
+            }
+        }, 5000);
+    }
+
+    function formatTrainInfo(text) {
+        // Improved formatting using regular expressions
+        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
+        text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');       // Italics
+        text = text.replace(/(\r\n|\n|\r)/gm, "<br/>");             // Newlines
+        text = text.replace(/ {2,}/g, ' ');                   // Spaces
+
+        // Convert bullet points
+        text = text.replace(/•/g, '<li>');
+        text = text.replace(/\|/g, '</li>');
+        text = '<ul>' + text + '</ul>'
+
+        // Convert Headings
+        const headingMappings = {
+            "Key Considerations": "h4",
+            "Popular Train Options": "h4",
+            "What to Expect on the Journey": "h4",
+            "How to Book Tickets and Check Schedules": "h4",
+            "Tips for Booking": "h4",
+            "Before You Travel": "h4",
+            "Classes of Travel (Coach Types)": "h4",
+            "Important Considerations When Choosing a Train": "h4",
+            "Key Trains on the Delhi - Howrah Route (Examples)": "h4",
+        };
+
+        for (const key in headingMappings) {
+            const tag = headingMappings[key];
+            const regex = new RegExp(key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+            text = text.replace(regex, `<${tag}>${key}</${tag}>`);
+        }
+        return text;
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

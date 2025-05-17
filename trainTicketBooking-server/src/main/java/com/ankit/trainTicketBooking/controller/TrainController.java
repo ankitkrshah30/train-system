@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/train")
 public class TrainController {
@@ -40,13 +42,23 @@ public class TrainController {
         }
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> findAllTrain(){
+        List<Trains> allTrains = trainsRepository.findAll();
+        if (!allTrains.isEmpty()) {
+            return new ResponseEntity<>(allTrains, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Train Not Found", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{trainNumber}/schedule")
     public ResponseEntity<?> getSchedule(@PathVariable String trainNumber){
         Optional<Trains> optionalTrain=trainsRepository.findByTrainNumber(trainNumber);
         if(optionalTrain.isPresent()){
             Trains train=optionalTrain.get();
             if(train.getTrainScheduleList()!=null&&!train.getTrainScheduleList().isEmpty()){
-                return new ResponseEntity<>(train.getTrainScheduleList(),HttpStatus.FOUND);
+                return new ResponseEntity<>(train.getTrainScheduleList(),HttpStatus.OK);
             }
             else{
                 return new ResponseEntity<>("schedule not found.",HttpStatus.NOT_FOUND);

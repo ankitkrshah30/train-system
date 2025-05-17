@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -82,7 +83,7 @@ public class UserController {
                 return new ResponseEntity<>("No Payments have been made yet.",
                         HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<>(paymentsList,HttpStatus.FOUND);
+            return new ResponseEntity<>(paymentsList,HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Some error Occurred",HttpStatus.BAD_REQUEST);
         }
@@ -99,7 +100,7 @@ public class UserController {
                 return new ResponseEntity<>("No Booking has been made yet.",
                         HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<>(bookingsList,HttpStatus.FOUND);
+            return new ResponseEntity<>(bookingsList,HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Some error Occurred",HttpStatus.BAD_REQUEST);
         }

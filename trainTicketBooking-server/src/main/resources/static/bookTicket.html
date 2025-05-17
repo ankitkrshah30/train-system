@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Ticket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: #a7bcf5;
+        }
+
+        h2 {
+            color: #2563eb;
+            margin-bottom: 35px;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            text-shadow: 1px 1px 2px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .form-group label:hover {
+            color: #1e40af;
+        }
+
+        .form-control, .select {
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 1rem;
+            color: #2d3748;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus, .select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            outline: none;
+        }
+
+        .btn-primary {
+            background-image: linear-gradient(to right, #2563eb 0%, #1d4ed8 100%);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-image 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            background-image: linear-gradient(to right, #1e40af 0%, #1e3a8a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .alert {
+            margin-top: 25px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 400;
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: fadeInAlert 0.3s forwards;
+        }
+
+        @keyframes fadeInAlert {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #d1fae5;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            display: flex;
+        }
+
+        .input-group-prepend .input-group-text {
+            background-color: #edf2f7;
+            border: 1px solid #e2e8f0;
+            border-right: none;
+            border-radius: 6px 0 0 6px;
+            color: #4a5568;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .input-group-prepend .input-group-text svg {
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 6px 6px 0;
+            border-left: none;
+        }
+
+        .input-group:focus-within .input-group-prepend .input-group-text {
+            border-color: #2563eb;
+            background-color: #e0e7ff;
+            color: #1e40af;
+        }
+
+        .input-group:focus-within .input-group-prepend .input-group-text svg {
+            fill: #1e40af;
+        }
+
+        .input-group .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .input-group-prepend {
+            display: flex;
+            align-items: center;
+        }
+
+        .passenger-form {
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            background-color: #f7fafc;
+        }
+
+        .passenger-form h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .remove-passenger-btn {
+            margin-top: 10px;
+            background-color: #f56565;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .remove-passenger-btn:hover {
+            background-color: #c53030;
+            transform: translateY(-2px);
+        }
+
+        .add-passenger-btn {
+            margin-top: 10px;
+            background-image: linear-gradient(to right, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: background-image 0.3s ease, transform 0.2s ease;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .add-passenger-btn:hover {
+            background-image: linear-gradient(to right, #1e40af 0%, #1e3a8a 100%);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Book Ticket</h2>
+    <form id="book-ticket-form">
+        <div class="form-group">
+            <label for="trainNo">Train Number:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-train"></i>
+                        </span>
+                </div>
+                <input type="text" class="form-control" id="trainNo" name="trainNo" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="travelDate">Travel Date:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="far fa-calendar-alt"></i>
+                        </span>
+                </div>
+                <input type="date" class="form-control" id="travelDate" name="travelDate" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="seatClass">Seat Class:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-couch"></i>
+                        </span>
+                </div>
+                <select class="form-control select" id="seatClass" name="seatClass" required>
+                    <option value="">Select Class</option>
+                    <option value="ac1">AC 1 Tier</option>
+                    <option value="ac2">AC 2 Tier</option>
+                    <option value="ac3">AC 3 Tier</option>
+                    <option value="sl">Sleeper</option>
+                    <option value="gen">General</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="fromStationCode">From Station Code:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </span>
+                </div>
+                <input type="text" class="form-control" id="fromStationCode" name="fromStationCode" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="toStationCode">To Station Code:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-map-pin"></i>
+                        </span>
+                </div>
+                <input type="text" class="form-control" id="toStationCode" name="toStationCode" required>
+            </div>
+        </div>
+
+        <div id="passengers-container">
+            <div class="passenger-form">
+                <h4>Passenger 1</h4>
+                <div class="form-group">
+                    <label for="name1">Name:</label>
+                    <input type="text" class="form-control" id="name1" name="name[]" required>
+                </div>
+                <div class="form-group">
+                    <label for="age1">Age:</label>
+                    <input type="number" class="form-control" id="age1" name="age[]" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender1">Gender:</label>
+                    <select class="form-control select" id="gender1" name="gender[]" required>
+                        <option value="">Select Gender</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                        <option value="O">Other</option>
+                    </select>
+                </div>
+                <button type="button" class="remove-passenger-btn" onclick="removePassenger(1)">Remove</button>
+            </div>
+        </div>
+        <button type="button" class="add-passenger-btn" onclick="addPassenger()">Add Passenger</button>
+
+        <button type="submit" class="btn btn-primary">Book Ticket</button>
+        <div id="alert-container" class="mt-4"></div>
+    </form>
+</div>
+
+<script>
+    let passengerCount = 1;
+
+    function addPassenger() {
+        passengerCount++;
+        const passengerForm = document.createElement('div');
+        passengerForm.className = 'passenger-form';
+        passengerForm.innerHTML = `
+            <h4>Passenger ${passengerCount}</h4>
+            <div class="form-group">
+                <label for="name${passengerCount}">Name:</label>
+                <input type="text" class="form-control" id="name${passengerCount}" name="name[]" required>
+            </div>
+            <div class="form-group">
+                <label for="age${passengerCount}">Age:</label>
+                <input type="number" class="form-control" id="age${passengerCount}" name="age[]" required>
+            </div>
+            <div class="form-group">
+                <label for="gender${passengerCount}">Gender:</label>
+                <select class="form-control select" id="gender${passengerCount}" name="gender[]" required>
+                    <option value="">Select Gender</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="O">Other</option>
+                </select>
+            </div>
+            <button type="button" class="remove-passenger-btn" onclick="removePassenger(${passengerCount})">Remove</button>
+        `;
+        document.getElementById('passengers-container').appendChild(passengerForm);
+    }
+
+    function removePassenger(passengerNumber) {
+        const passengerForm = document.querySelector(`.passenger-form:nth-child(${passengerNumber})`);
+        if (passengerForm) {
+            passengerForm.remove();
+            passengerCount--;
+            // Renumber the remaining passenger forms
+            const passengerForms = document.querySelectorAll('.passenger-form');
+            passengerForms.forEach((form, index) => {
+                form.querySelector('h4').textContent = `Passenger ${index + 1}`;
+                const nameInput = form.querySelector('[name^="name"]');
+                const ageInput = form.querySelector('[name^="age"]');
+                const genderSelect = form.querySelector('[name^="gender"]');
+                nameInput.id = `name${index + 1}`;
+                ageInput.id = `age${index + 1}`;
+                genderSelect.id = `gender${index + 1}`;
+            });
+        }
+    }
+
+    document.getElementById('book-ticket-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const trainNo = document.getElementById('trainNo').value;
+        const travelDate = document.getElementById('travelDate').value;
+        const seatClass = document.getElementById('seatClass').value;
+        const fromStationCode = document.getElementById('fromStationCode').value;
+        const toStationCode = document.getElementById('toStationCode').value;
+
+        const names = document.querySelectorAll('[name="name[]"]');
+        const ages = document.querySelectorAll('[name="age[]"]');
+        const genders = document.querySelectorAll('[name="gender[]"]');
+
+        const passengers = [];
+        for (let i = 0; i < names.length; i++) {
+            passengers.push({
+                name: names[i].value,
+                age: ages[i].value,
+                gender: genders[i].value
+            });
+        }
+
+        if (!trainNo || !travelDate || !seatClass || !fromStationCode || !toStationCode) {
+            showAlert('danger', 'Please fill in all the fields.');
+            return;
+        }
+
+        if (passengers.length === 0) {
+            showAlert('danger', 'Please add at least one passenger.');
+            return;
+        }
+
+        // Construct the JSON object as expected by the backend
+        const ticketData = {
+            trainNo: trainNo,
+            travelDate: travelDate,
+            seatClass: seatClass,
+            fromStationCode: fromStationCode,
+            toStationCode: toStationCode,
+            passengers: passengers
+        };
+
+        // **Important:** Include basic auth headers.  Replace with your actual username and password.
+        const username = 'user';  //  Replace with your username
+        const password = 'password'; // Replace with your password
+        const authHeader = 'Basic ' + btoa(username + ':' + password);  //  Creates the Base64 encoded string
+
+        fetch('http://localhost:8080/book-ticket', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authHeader  //  Add the Authorization header
+            },
+            body: JSON.stringify(ticketData),
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    let errorMessage = errorData.message || `Server error: ${response.status}`;
+                    throw new Error(errorMessage);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+            showAlert('success', data.message || 'Ticket booked successfully!');
+            document.getElementById('book-ticket-form').reset();
+            document.getElementById('passengers-container').innerHTML = `<div class="passenger-form">
+                <h4>Passenger 1</h4>
+                <div class="form-group">
+                    <label for="name1">Name:</label>
+                    <input type="text" class="form-control" id="name1" name="name[]" required>
+                </div>
+                <div class="form-group">
+                    <label for="age1">Age:</label>
+                    <input type="number" class="form-control" id="age1" name="age[]" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender1">Gender:</label>
+                    <select class="form-control select" id="gender1" name="gender[]" required>
+                        <option value="">Select Gender</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                        <option value="O">Other</option>
+                    </select>
+                </div>
+                <button type="button" class="remove-passenger-btn" onclick="removePassenger(1)">Remove</button>
+            </div>`;
+            passengerCount = 1;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('danger', 'Error: ' + error.message);
+        });
+    });
+
+    function showAlert(type, message) {
+        const alertContainer = document.getElementById('alert-container');
+        alertContainer.innerHTML = '';
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        requestAnimationFrame(() => {
+            alertContainer.appendChild(alertDiv);
+        });
+        setTimeout(() => {
+            if (alertDiv.parentElement) {
+                alertDiv.style.opacity = '0';
+                alertDiv.style.transform = 'translateY(-10px)';
+                setTimeout(() => alertDiv.remove(), 300);
+            }
+        }, 5000);
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
