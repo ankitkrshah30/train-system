@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Railway Seat Selection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <style>
+        /* Custom CSS for Seat Layout */
+        .seat {
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+            border: 1px solid #4a5568; /* gray-600 */
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            user-select: none;
+        }
+
+        .available {
+            background-color: #f5f5f5; /* gray-100 */
+            color: #2d3748; /* gray-800 */
+        }
+
+        .available:hover {
+            background-color: #E2E8F0; /* gray-200 */
+        }
+
+        .selected {
+            background-color: #48bb78; /* green-500 */
+            color: white;
+        }
+
+        .booked {
+            background-color: #cbd5e0; /* gray-400 */
+            color: #718096; /* gray-600 */
+            cursor: not-allowed;
+        }
+
+        .seat-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 5px;
+        }
+
+        .coach {
+            padding: 1rem;
+            border: 1px solid #a0aec0; /* gray-500 */
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            background-color: #f7fafc; /* gray-100 */
+        }
+
+        .berth-info {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            color: #4a5568; /* gray-700 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto p-6">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Indian Railway Seat Selection</h1>
+
+    <div class="bg-white shadow-md rounded-lg p-6 mb-4">
+        <div class="flex flex-col space-y-4">
+            <div>
+                <label for="train-number" class="block text-gray-700 text-sm font-bold mb-2">Train Number:</label>
+                <input type="text" id="train-number" placeholder="Enter Train Number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <p id="train-number-error" class="text-red-500 text-xs italic" style="display: none;"></p>
+            </div>
+            <div>
+                <label for="coach-type" class="block text-gray-700 text-sm font-bold mb-2">Coach Type:</label>
+                <select id="coach-type" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="" disabled selected>Select Coach Type</option>
+                    <option value="SL">Sleeper (SL)</option>
+                    <option value="3A">3rd AC (3A)</option>
+                    <option value="2A">2nd AC (2A)</option>
+                    <option value="1A">1st AC (1A)</option>
+                </select>
+                <p id="coach-type-error" class="text-red-500 text-xs italic" style="display: none;"></p>
+            </div>
+            <div>
+                <label for="num-seats" class="block text-gray-700 text-sm font-bold mb-2">Number of Seats:</label>
+                <input type="number" id="num-seats" min="1" value="1" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <p id="num-seats-error" class="text-red-500 text-xs italic" style="display: none;"></p>
+            </div>
+            <button id="get-layout-button" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Get Seat Layout
+            </button>
+        </div>
+    </div>
+
+    <div id="seat-layout-container" class="bg-white shadow-md rounded-lg p-6" style="display: none;">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Seat Layout</h2>
+        <div id="coaches-container" class="flex flex-wrap justify-center">
+        </div>
+        <div id="selected-seats-info" class="mt-4 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">Selected Seats:</h3>
+            <ul id="selected-seats-list" class="list-disc list-inside text-gray-600">
+            </ul>
+            <p id="total-cost" class="mt-2 font-semibold text-gray-800">Total Cost: ₹0</p>
+            <button id="book-seats-button" class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" style="display: none;">
+                Book Seats
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const trainNumberInput = document.getElementById('train-number');
+    const coachTypeSelect = document.getElementById('coach-type');
+    const numSeatsInput = document.getElementById('num-seats');
+    const getLayoutButton = document.getElementById('get-layout-button');
+    const seatLayoutContainer = document.getElementById('seat-layout-container');
+    const coachesContainer = document.getElementById('coaches-container');
+    const selectedSeatsList = document.getElementById('selected-seats-list');
+    const totalCostDisplay = document.getElementById('total-cost');
+    const bookSeatsButton = document.getElementById('book-seats-button');
+    const trainNumberError = document.getElementById('train-number-error');
+    const coachTypeError = document.getElementById('coach-type-error');
+    const numSeatsError = document.getElementById('num-seats-error');
+
+    let selectedSeats = [];
+    let totalCost = 0;
+    const pricePerSeat = {
+        'SL': 200,
+        '3A': 500,
+        '2A': 700,
+        '1A': 1000
+    };
+
+    // Helper Functions
+    /**
+     * Creates a seat element with appropriate classes and attributes.
+     * @param {number} seatNumber - The seat number.
+     * @param {string} status - The status of the seat ('available', 'selected', 'booked').
+     * @param {string} coachType - The coach type ('SL', '3A', '2A', '1A').
+     * @returns {HTMLDivElement} The seat element.
+     */
+    function createSeatElement(seatNumber, status, coachType) {
+        const seat = document.createElement('div');
+        seat.classList.add('seat');
+        seat.classList.add(status);
+        seat.textContent = seatNumber;
+        seat.dataset.seatNumber = seatNumber;
+        seat.dataset.status = status;
+        seat.dataset.coachType = coachType;
+
+        if (status === 'available') {
+            seat.addEventListener('click', handleSeatClick);
+        }
+        return seat;
+    }
+
+    /**
+     * Renders the seat layout for a given coach type.
+     * @param {string} coachType - The coach type ('SL', '3A', '2A', '1A').
+     * @returns {Array<HTMLDivElement>} An array of coach elements.
+     */
+    function renderSeatLayout(coachType) {
+        const coachLayouts = {
+            'SL': [
+                [1, 2, 3, 4, 5, 6, 7, 8],
+                [9, 10, 11, 12, 13, 14, 15, 16],
+                [17, 18, 19, 20, 21, 22, 23, 24],
+                [25, 26, 27, 28, 29, 30, 31, 32],
+                [33, 34, 35, 36, 37, 38, 39, 40],
+                [41, 42, 43, 44, 45, 46, 47, 48],
+                [49, 50, 51, 52, 53, 54, 55, 56],
+                [57, 58, 59, 60, 61, 62, 63, 64],
+                [65, 66, 67, 68, 69, 70, 71, 72],
+                [73, 74, 75, 76, 77, 78]
+            ],
+            '3A': [
+                [1, 2, 3, 4, 5, 6],
+                [7, 8, 9, 10, 11, 12],
+                [13, 14, 15, 16, 17, 18],
+                [19, 20, 21, 22, 23, 24],
+                [25, 26, 27, 28, 29, 30],
+                [31, 32, 33, 34, 35, 36],
+                [37, 38, 39, 40, 41, 42],
+                [43, 44, 45, 46, 47, 48],
+                [49, 50, 51, 52, 53, 54],
+                [55, 56, 57, 58, 59, 60],
+                [61, 62, 63, 64]
+            ],
+            '2A': [
+                [1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12],
+                [13, 14, 15, 16],
+                [17, 18, 19, 20],
+                [21, 22, 23, 24],
+                [25, 26, 27, 28],
+                [29, 30, 31, 32],
+                [33, 34, 35, 36],
+                [37, 38, 39, 40],
+                [41, 42, 43, 44],
+                [45, 46, 47, 48],
+                [49, 50, 51, 52]
+            ],
+            '1A': [
+                [1, 2],
+                [3, 4],
+                [5, 6],
+                [7, 8],
+                [9, 10],
+                [11, 12],
+                [13, 14],
+                [15, 16],
+                [17, 18],
+                [19, 20],
+                [21, 22],
+                [23, 24]
+            ]
+        };
+
+        const coachDiv = document.createElement('div');
+        coachDiv.classList.add('coach');
+        coachDiv.textContent = `Coach: ${coachType}`;
+
+        const layout = coachLayouts[coachType];
+        if (!layout) {
+            return []; // Return empty array for invalid coach type
+        }
+
+        layout.forEach(rowSeats => {
+            const rowDiv = document.createElement('div');
+            rowDiv.classList.add('row');
+            rowSeats.forEach(seatNumber => {
+                // Simulate some seats as already booked (for demonstration)
+                const seatStatus = Math.random() < 0.2 ? 'booked' : 'available'; // 20% chance of being booked
+                const seat = createSeatElement(seatNumber, seatStatus, coachType);
+                rowDiv.appendChild(seat);
+            });
+            coachDiv.appendChild(rowDiv);
+        });
+        return [coachDiv]; // Return array containing the coach div
+    }
+
+    /**
+     * Handles the click event of a seat.
+     * @param {Event} event - The click event.
+     */
+    function handleSeatClick(event) {
+        const seat = event.target;
+        const seatNumber = parseInt(seat.dataset.seatNumber);
+        const coachType = seat.dataset.coachType;
+
+        if (seat.dataset.status === 'available') {
+            if (selectedSeats.length < parseInt(numSeatsInput.value)) {
+                seat.classList.remove('available');
+                seat.classList.add('selected');
+                seat.dataset.status = 'selected';
+                selectedSeats.push({
+                    seatNumber: seatNumber,
+                    coachType: coachType,
+                    berthType: getBerthType(seatNumber, coachType) // Determine berth type
+                });
+                totalCost += pricePerSeat[coachType];
+                updateSelectedSeatsInfo();
+            } else {
+                alert(`You can select a maximum of ${numSeatsInput.value} seats.`);
+            }
+        } else if (seat.dataset.status === 'selected') {
+            seat.classList.remove('selected');
+            seat.classList.add('available');
+            seat.dataset.status = 'available';
+            const index = selectedSeats.findIndex(s => s.seatNumber === seatNumber && s.coachType === coachType);
+            if (index > -1) {
+                selectedSeats.splice(index, 1);
+                totalCost -= pricePerSeat[coachType];
+                updateSelectedSeatsInfo();
+            }
+        }
+    }
+
+    /**
+     * Updates the display of selected seats and total cost.
+     */
+    function updateSelectedSeatsInfo() {
+        selectedSeatsList.innerHTML = ''; // Clear the list
+        if (selectedSeats.length > 0) {
+            selectedSeats.forEach(seat => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Seat ${seat.seatNumber} (${seat.coachType}) - ${seat.berthType}`;
+                selectedSeatsList.appendChild(listItem);
+            });
+            totalCostDisplay.textContent = `Total Cost: ₹${totalCost}`;
+            bookSeatsButton.style.display = 'inline-block';
+        } else {
+            totalCostDisplay.textContent = `Total Cost: ₹0`;
+            bookSeatsButton.style.display = 'none';
+        }
+    }
+
+    /**
+     * Handles the click event of the "Book Seats" button.
+     */
+    function handleBookSeats() {
+        if (selectedSeats.length > 0) {
+            // In a real application, you would send this data to a server
+            alert(`Booking confirmed for seats: ${selectedSeats.map(s => s.seatNumber).join(', ')} in coach(es) ${selectedSeats.map(s => s.coachType).join(', ')}.\nTotal Cost: ₹${totalCost}`);
+            // Reset the selected seats and total cost
+            selectedSeats = [];
+            totalCost = 0;
+            updateSelectedSeatsInfo();
+            // Disable further seat selection
+            const seats = document.querySelectorAll('.seat');
+            seats.forEach(seat => {
+                seat.removeEventListener('click', handleSeatClick);
+                seat.classList.remove('available');
+                seat.classList.add('booked');
+                seat.dataset.status = 'booked';
+            });
+            bookSeatsButton.style.display = 'none';
+        } else {
+            alert('Please select seats to book.');
+        }
+    }
+
+    /**
+     * Validates the train number input.
+     * @returns {boolean} True if the train number is valid, false otherwise.
+     */
+    function validateTrainNumber() {
+        const trainNumber = trainNumberInput.value.trim();
+        if (!trainNumber) {
+            trainNumberError.textContent = 'Please enter a train number.';
+            trainNumberError.style.display = 'block';
+            return false;
+        }
+        if (!/^\d{4,5}$/.test(trainNumber)) { // Basic check for 4 or 5 digits
+            trainNumberError.textContent = 'Invalid train number format. Please use 4 or 5 digits.';
+            trainNumberError.style.display = 'block';
+            return false;
+        }
+        trainNumberError.style.display = 'none';
+        return true;
+    }
+
+    /**
+     * Validates the coach type selection.
+     * @returns {boolean} True if a coach type is selected, false otherwise.
+     */
+    function validateCoachType() {
+        const coachType = coachTypeSelect.value;
+        if (!coachType) {
+            coachTypeError.textContent = 'Please select a coach type.';
+            coachTypeError.style.display = 'block';
+            return false;
+        }
+        coachTypeError.style.display = 'none';
+        return true;
+    }
+
+    /**
+     * Validates the number of seats input.
+     * @returns {boolean} True if the number of seats is valid, false otherwise.
+     */
+    function validateNumSeats() {
+        const numSeats = parseInt(numSeatsInput.value);
+        if (isNaN(numSeats) || numSeats < 1) {
+            numSeatsError.textContent = 'Please enter a valid number of seats (1 or more).';
+            numSeatsError.style.display = 'block';
+            return false;
+        }
+        numSeatsError.style.display = 'none';
+        return true;
+    }
+
+    /**
+     * Determines the berth type based on the seat number and coach type.
+     * @param {number} seatNumber - The seat number.
+     * @param {string} coachType - The coach type.
+     * @returns {string} The berth type ('Lower', 'Middle', 'Upper', 'Side Lower', 'Side Upper').
+     */
+    function getBerthType(seatNumber, coachType) {
+        switch (coachType) {
+            case 'SL':
+                if (seatNumber % 8 === 1) return 'Lower';
+                if (seatNumber % 8 === 2) return 'Middle';
+                if (seatNumber % 8 === 3) return 'Upper';
+                if (seatNumber % 8 === 4) return 'Lower';
+                if (seatNumber % 8 === 5) return 'Middle';
+                if (seatNumber % 8 === 6) return 'Upper';
+                if (seatNumber % 8 === 7) return 'Side Lower';
+                if (seatNumber % 8 === 0) return 'Side Upper';
+                break;
+            case '3A':
+            case '2A':
+                if (seatNumber % 6 === 1) return 'Lower';
+                if (seatNumber % 6 === 2) return 'Upper';
+                if (seatNumber % 6 === 3) return 'Lower';
+                if (seatNumber % 6 === 4) return 'Upper';
+                if (seatNumber % 6 === 5) return 'Side Lower';
+                if (seatNumber % 6 === 0) return 'Side Upper';
+                break;
+            case '1A':
+                if (seatNumber % 2 === 1) return 'Lower';
+                if (seatNumber % 2 === 0) return 'Upper';
+                break;
+            default:
+                return 'Unknown';
+        }
+    }
+
+    // Event Listeners
+    getLayoutButton.addEventListener('click', () => {
+        if (validateTrainNumber() && validateCoachType() && validateNumSeats()) {
+            const coachType = coachTypeSelect.value;
+            coachesContainer.innerHTML = ''; // Clear previous layouts
+            const coachDivs = renderSeatLayout(coachType); // Get the array of coach divs
+            coachDivs.forEach(coachDiv => {
+                coachesContainer.appendChild(coachDiv); // Append each coach div
+            });
+            seatLayoutContainer.style.display = 'block';
+            selectedSeats = [];
+            totalCost = 0;
+            updateSelectedSeatsInfo();
+        }
+    });
+
+    bookSeatsButton.addEventListener('click', handleBookSeats);
+
+    // Initial setup: hide the seat layout and booking button
+    seatLayoutContainer.style.display = 'none';
+    bookSeatsButton.style.display = 'none';
+</script>
+</body>
+</html>

@@ -3,283 +3,549 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Train Schedule</title>
+    <title>Create Train Schedule</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
             color: #1f2937;
-            padding-top: 20px;
-            padding-bottom: 20px;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            color: #4c51bf;
-            text-align: center;
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-
-        #input-section {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb;
-        }
-
-        #input-section label {
-            font-weight: 500;
-            color: #6b7280;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        #input-section input {
-            border-radius: 6px;
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background-color: #ffffff;
+            border-radius: 1.25rem;
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1), 0 10px 15px -8px rgba(0, 0, 0, 0.08);
             border: 1px solid #d1d5db;
-            padding: 10px;
-            width: 100%;
-            margin-bottom: 20px;
-            font-size: 1rem;
-            transition: border-color 0.2s ease-in-out;
         }
 
-        #input-section input:focus {
-            outline: none;
-            border-color: #4c51bf;
-            box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.15);
+        .title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 2rem;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(79, 70, 229, 0.2);
         }
 
-        #input-section button {
-            background-color: #4c51bf;
-            color: #fff;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            width: 100%;
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .label {
             display: block;
-            margin: 0 auto;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.75rem;
+            transition: color 0.3s ease;
         }
 
-        #input-section button:hover {
-            background-color: #3b419e;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .label:hover {
+            color: #4f46e5;
         }
 
-        #schedule-table {
-            margin-top: 30px;
+        .input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 6px 12px rgba(79, 70, 229, 0.15);
+        }
+
+        .table {
             width: 100%;
             border-collapse: collapse;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb;
-            overflow-x: auto;
-            display: block;
-            max-width: 100%;
+            margin-top: 2rem;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
         }
 
-        #schedule-table thead th {
-            background-color: #f0f0f0;
-            color: #4c51bf;
-            padding: 12px;
-            text-align: left;
-            border-bottom: 2px solid #d1d5db;
+        .table:hover {
+            transform: translateY(-0.25rem);
+        }
+
+        .table-header {
+            background-color: #f0f4f8;
+            color: #374151;
             font-weight: 600;
-        }
-
-        #schedule-table tbody td {
-            padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        #schedule-table tbody tr:hover {
+        .table-header:hover {
+            background-color: #e0e7eb;
+            color: #4f46e5;
+        }
+
+        .table-row:nth-child(odd) {
             background-color: #f7fafc;
         }
 
-        #loading-indicator {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 1.2rem;
-            color: #4c51bf;
-            font-weight: 500;
-            display: none;
+        .table-row:nth-child(even) {
+            background-color: #ffffff;
         }
 
-        #error-message {
+
+        .table-cell, .table-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: padding 0.2s ease;
+        }
+
+        .table-cell:hover,
+        .table-header:hover {
+            padding: 1.5rem;
+        }
+
+        .table-cell {
+            color: #4b5563;
+            transition: color 0.3s ease;
+        }
+
+        .table-cell:hover {
+            color: #4f46e5;
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-image 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background-image: linear-gradient(to right, #6d28d9, #4f46e5);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-image: linear-gradient(to right, #4c1d95, #4338ca);
+            transform: translateY(-0.5rem);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-danger {
+            background-image: linear-gradient(to right, #ef4444, #dc2626);
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background-image: linear-gradient(to right, #c81e1e, #b91c1c);
+            transform: translateY(-0.5rem);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-danger:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-success {
+            background-image: linear-gradient(to right, #16a34a, #15803d);
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background-image: linear-gradient(to right, #147835, #1e40af);
+            transform: translateY(-0.5rem);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-success:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .response-container {
+            margin-top: 3rem;
+            padding: 2rem;
+            background-color: #f7fafc;
+            border-radius: 1rem;
+            border: 1px solid #e0e0e0;
             text-align: center;
-            margin-top: 30px;
             font-size: 1.2rem;
+            color: #374151;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #response-message {
+            font-weight: 600;
+            color: #15803d;
+            transition: color 0.3s ease;
+        }
+
+        #response-message.error-message {
             color: #dc2626;
-            font-weight: 500;
-            background-color: #fee2e2;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #fecaca;
-            display: none;
         }
 
-        /* Styles for small screens */
-        @media (max-width: 768px) {
-            #schedule-table thead {
-                display: none;
-            }
-            #schedule-table tbody td {
-                display: block;
-                width: 100%;
-                text-align: left;
-                padding-left: 50%;
-                position: relative;
-                border-bottom: 1px solid #e5e7eb;
-            }
-            #schedule-table tbody td:before {
-                position: absolute;
-                left: 10px;
-                width: 40%;
-                font-weight: 600;
-                color: #6b7280;
-                content: attr(data-column) ": ";
-            }
-            #schedule-table tbody tr {
-                margin-bottom: 15px;
-                display: block;
-                border: 1px solid #e5e7eb;
-                border-radius: 10px;
-                padding: 10px;
-                background-color: #fff;
-            }
-            #schedule-table {
-                border: none;
-                box-shadow: none;
-            }
+        .add-more-btn {
+            margin-top: 1.5rem;
+            text-align: center;
         }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group-label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.75rem;
+            transition: color 0.3s ease;
+        }
+
+        .input-group-label:hover {
+            color: #4f46e5;
+        }
+
+        .input-group-field {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-group .input {
+            flex: 1;
+        }
+
+        .input-group-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+            color: #6b7280;
+            margin-right: 0.5rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .input-group-icon:hover {
+            background-color: #f0f4f8;
+            color: #4f46e5;
+        }
+
+        .input-group-icon img {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
     </style>
 </head>
-<body>
+<body class="bg-gray-100">
 <div class="container">
-    <h1>Train Schedule</h1>
+    <h1 class="title">Create Train Schedule</h1>
 
-    <div id="input-section">
-        <label for="trainNumber">Enter Train Number:</label>
-        <input type="text" id="trainNumber" placeholder="e.g., 12628">
-        <button id="fetchSchedule">Fetch Schedule</button>
+    <div class="form-group">
+        <label for="trainNumber" class="label">Train Number:</label>
+        <div class="input-group-field">
+            <div class="input-group-icon">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/train.svg" alt="Train Icon">
+            </div>
+            <input type="text" id="trainNumber" class="input" placeholder="Enter Train Number" required>
+        </div>
     </div>
 
-    <table id="schedule-table" class="table table-responsive">
-        <thead>
-        <tr>
-            <th>Station Name</th>
-            <th>Station Code</th>
-            <th>Arrival Time</th>
-            <th>Departure Time</th>
-            <th>Distance</th>
-            <th>Train Number</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-    <div id="loading-indicator">Loading...</div>
-    <div id="error-message" style="display:none;"></div>
+    <div id="schedule-container">
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">Schedule Details</h3>
+        <div class="schedule-entry">
+            <div class="input-group">
+                <label class="input-group-label">Station Code:</label>
+                <div class="input-group-field">
+                    <div class="input-group-icon">
+                        <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/map-pin.svg" alt="Station Code Icon">
+                    </div>
+                    <input type="text" name="stationCode[]" class="input" placeholder="Enter Station Code" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label class="input-group-label">Station Name:</label>
+                <div class="input-group-field">
+                    <div class="input-group-icon">
+                        <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/map.svg" alt="Station Name Icon">
+                    </div>
+                    <input type="text" name="stationName[]" class="input" placeholder="Enter Station Name" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label class="input-group-label">Arrival Time:</label>
+                <div class="input-group-field">
+                    <div class="input-group-icon">
+                        <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/clock.svg" alt="Arrival Time Icon">
+                    </div>
+                    <input type="text" name="arrivalTime[]" class="input" placeholder="Enter Arrival Time (HH:MM)">
+                </div>
+            </div>
+            <div class="input-group">
+                <label class="input-group-label">Departure Time:</label>
+                <div class="input-group-field">
+                    <div class="input-group-icon">
+                        <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/clock.svg" alt="Departure Time Icon">
+                    </div>
+                    <input type="text" name="departureTime[]" class="input" placeholder="Enter Departure Time (HH:MM)" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label class="input-group-label">Distance:</label>
+                <div class="input-group-field">
+                    <div class="input-group-icon">
+                        <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/ruler.svg" alt="Distance Icon">
+                    </div>
+                    <input type="number" name="distance[]" class="input" placeholder="Enter Distance (km)" required>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="add-more-btn">
+        <button id="add-more-button" class="btn btn-success">
+            <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/plus-circle.svg" alt="Add More Icon" style="margin-right: 0.5rem;">
+            Add More
+        </button>
+    </div>
+
+    <button id="create-schedule-button" class="btn btn-primary">
+        <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/calendar-plus.svg" alt="Create Schedule Icon" style="margin-right: 0.5rem;">
+        Create Schedule
+    </button>
+
+    <div class="response-container" id="response-container" style="display: none;">
+        <p id="response-message"></p>
+    </div>
 </div>
 
 <script>
     const trainNumberInput = document.getElementById('trainNumber');
-    const fetchScheduleButton = document.getElementById('fetchSchedule');
-    const scheduleTableBody = document.querySelector('#schedule-table tbody');
-    const loadingIndicator = document.getElementById('loading-indicator');
-    const errorMessageElement = document.getElementById('error-message');
+    const scheduleContainer = document.getElementById('schedule-container');
+    const addMoreButton = document.getElementById('add-more-button');
+    const createScheduleButton = document.getElementById('create-schedule-button');
+    const responseContainer = document.getElementById('response-container');
+    const responseMessage = document.getElementById('response-message');
 
-    function displayErrorMessage(message) {
-        errorMessageElement.textContent = message;
-        errorMessageElement.style.display = 'block';
-        loadingIndicator.style.display = 'none';
-        scheduleTableBody.innerHTML = '';
-    }
+    addMoreButton.addEventListener('click', () => {
+        const newScheduleEntry = document.createElement('div');
+        newScheduleEntry.classList.add('schedule-entry');
+        newScheduleEntry.innerHTML = `
+            <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-4">Schedule Details</h3>
+             <div class="input-group">
+                <label class="input-group-label">Station Code:</label>
+                <div class="input-group-field">
+                    <div class="input-group-icon">
+                        <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/map-pin.svg" alt="Station Code Icon">
+                    </div>
+                    <input type="text" name="stationCode[]" class="input" placeholder="Enter Station Code" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label class="input-group-label">Station Name:</label>
+                <div class="input-group-field">
+                     <div class="input-group-icon">
+                        <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/map.svg" alt="Station Name Icon">
+                    </div>
+                    <input type="text" name="stationName[]" class="input" placeholder="Enter Station Name" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label class="input-group-label">Arrival Time:</label>
+                <div class="input-group-field">
+                    <div class="input-group-icon">
+                       <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/clock.svg" alt="Arrival Time Icon">
+                    </div>
+                    <input type="text" name="arrivalTime[]" class="input" placeholder="Enter Arrival Time (HH:MM)">
+                </div>
+            </div>
+            <div class="input-group">
+                <label class="input-group-label">Departure Time:</label>
+                <div class="input-group-field">
+                    <div class="input-group-icon">
+                        <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/clock.svg" alt="Departure Time Icon">
+                    </div>
+                    <input type="text" name="departureTime[]" class="input" placeholder="Enter Departure Time (HH:MM)" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label class="input-group-label">Distance:</label>
+                <div class="input-group-field">
+                    <div class="input-group-icon">
+                       <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/ruler.svg" alt="Distance Icon">
+                    </div>
+                    <input type="number" name="distance[]" class="input" placeholder="Enter Distance (km)" required>
+                </div>
+            </div>
+        `;
+        scheduleContainer.appendChild(newScheduleEntry);
+    });
 
-    function clearErrorMessage() {
-        errorMessageElement.style.display = 'none';
-        errorMessageElement.textContent = '';
-    }
-
-    function showLoadingIndicator() {
-        loadingIndicator.style.display = 'block';
-        scheduleTableBody.innerHTML = '';
-        clearErrorMessage();
-    }
-
-    function hideLoadingIndicator() {
-        loadingIndicator.style.display = 'none';
-    }
-
-    fetchScheduleButton.addEventListener('click', () => {
+    createScheduleButton.addEventListener('click', () => {
         const trainNumber = trainNumberInput.value.trim();
         if (!trainNumber) {
-            displayErrorMessage('Please enter a train number.');
+            alert('Please enter the Train Number.');
             return;
         }
 
-        showLoadingIndicator();
+        const scheduleEntries = document.querySelectorAll('.schedule-entry');
+        const scheduleData = [];
+        let hasErrors = false;
 
-        const apiUrl = `http://localhost:8080/train/${trainNumber}/schedule`;
+        scheduleEntries.forEach((entry, index) => {
+            const stationCode = entry.querySelector('input[name="stationCode[]"]').value.trim();
+            const stationName = entry.querySelector('input[name="stationName[]"]').value.trim();
+            const arrivalTime = entry.querySelector('input[name="arrivalTime[]"]').value.trim();
+            const departureTime = entry.querySelector('input[name="departureTime[]"]').value.trim();
+            const distance = parseInt(entry.querySelector('input[name="distance[]"]').value.trim(), 10);
 
-        fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                     return response.text().then(text => {
-                        let errorMessage = `Failed to fetch schedule: ${response.status} - ${response.statusText}`;
-                        if (text) {
-                            errorMessage += `, Server response: ${text}`;
-                        }
-                        throw new Error(errorMessage);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                hideLoadingIndicator();
-                if (data && Array.isArray(data)) {
-                    scheduleTableBody.innerHTML = '';
-                    data.forEach(schedule => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td data-column="Station Name">${schedule.stationName}</td>
-                            <td data-column="Station Code">${schedule.stationCode}</td>
-                            <td data-column="Arrival Time">${schedule.arrivalTime || 'N/A'}</td>
-                            <td data-column="Departure Time">${schedule.departureTime || 'N/A'}</td>
-                            <td data-column="Distance">${schedule.distance}</td>
-                            <td data-column="Train Number">${schedule.trainNumber}</td>
-                        `;
-                        scheduleTableBody.appendChild(row);
-                    });
-                } else if (data) {
-                    displayErrorMessage('No schedule data found for this train.');
-                }
-                 else {
-                    displayErrorMessage('Empty response received from server.');
-                }
-            })
-            .catch(error => {
-                hideLoadingIndicator();
-                displayErrorMessage(error.message);
-                console.error('Error fetching schedule:', error);
+            if (!stationCode || !stationName || !departureTime || isNaN(distance)) {
+                alert(`Please fill in all required fields for schedule entry ${index + 1}.`);
+                hasErrors = true;
+                return;
+            }
+
+            scheduleData.push({
+                stationCode: stationCode,
+                stationName: stationName,
+                arrivalTime: arrivalTime,
+                departureTime: departureTime,
+                distance: distance
             });
+        });
+
+        if (hasErrors) {
+            return;
+        }
+
+        if (scheduleData.length === 0) {
+            alert('Please add at least one schedule entry.');
+            return;
+        }
+
+        const requestData =  scheduleData;
+
+        console.log("JSON data to be sent:", JSON.stringify(requestData, null, 2));
+
+        fetch(`http://localhost:8080/schedule/create/${trainNumber}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            console.log("Raw response:", response);
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                return response.text().then(text => {
+                    //handle empty response
+                    if (!text) {
+                        return { message: "Schedule created successfully!" };
+                    }
+                    throw new Error(`Expected JSON response, but got: ${contentType || 'no content type'}.  Response text: ${text}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Parsed response:", data);
+            responseContainer.style.display = 'block';
+            responseMessage.textContent = data.message || 'Schedule created successfully!';
+            responseMessage.className = 'text-green-600';
+            trainNumberInput.value = '';
+            scheduleContainer.innerHTML = `
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">Schedule Details</h3>
+                <div class="schedule-entry">
+                    <div class="input-group">
+                        <label class="input-group-label">Station Code:</label>
+                        <div class="input-group-field">
+                            <div class="input-group-icon">
+                                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/map-pin.svg" alt="Station Code Icon">
+                            </div>
+                            <input type="text" name="stationCode[]" class="input" placeholder="Enter Station Code" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-group-label">Station Name:</label>
+                        <div class="input-group-field">
+                             <div class="input-group-icon">
+                                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/map.svg" alt="Station Name Icon">
+                            </div>
+                            <input type="text" name="stationName[]" class="input" placeholder="Enter Station Name" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-group-label">Arrival Time:</label>
+                        <div class="input-group-field">
+                            <div class="input-group-icon">
+                               <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/clock.svg" alt="Arrival Time Icon">
+                            </div>
+                            <input type="text" name="arrivalTime[]" class="input" placeholder="Enter Arrival Time (HH:MM)">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-group-label">Departure Time:</label>
+                        <div class="input-group-field">
+                            <div class="input-group-icon">
+                                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/clock.svg" alt="Departure Time Icon">
+                            </div>
+                            <input type="text" name="departureTime[]" class="input" placeholder="Enter Departure Time (HH:MM)" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-group-label">Distance:</label>
+                        <div class="input-group-field">
+                            <div class="input-group-icon">
+                               <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/ruler.svg" alt="Distance Icon">
+                            </div>
+                            <input type="number" name="distance[]" class="input" placeholder="Enter Distance (km)" required>
+                        </div>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            responseContainer.style.display = 'block';
+            responseMessage.textContent = error.message || 'An unexpected error occurred.';
+            responseMessage.className = 'text-red-600 error-message';
+        });
     });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
